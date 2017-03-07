@@ -37,8 +37,8 @@ console.log("Chosen pledges total: " + chosenDatasetTotal);
 
 /*  Remove failed pledges */
 var numberOfDroppedPledgers = 10;
-var subset = getRandomSubsetOfChosenApplicants(chosenDataset, numberOfDroppedPledgers);
-removeSubsetOfApplicants(chosenDataset, subset);
+var subset = getRandomSubsetOfChosenApplicants(numberOfDroppedPledgers);
+removeSubsetOfApplicants(subset);
 
 console.log("\nOH FUCK, WE LOST " + numberOfDroppedPledgers + " PLEDGERS!");
 console.log("New number of chosen pledgers: " + Object.keys(chosenDataset).length);
@@ -54,9 +54,9 @@ console.log("New chosen pledges total: " + chosenDatasetTotal);
 
 
 
-function getRandomSubsetOfChosenApplicants(obj, numberOf) {
+function getRandomSubsetOfChosenApplicants(numberOf) {
   var subset = [];
-  var keys = Object.keys(obj);
+  var keys = Object.keys(chosenDataset);
   for (var i = 0; i < numberOf; i++) {
     var randomIndex = Math.floor(Math.random() * keys.length);
     var randomKey = keys.splice(randomIndex, 1)[0];
@@ -65,10 +65,10 @@ function getRandomSubsetOfChosenApplicants(obj, numberOf) {
   return subset;
 }
 
-function removeSubsetOfApplicants(obj, arrayOfApplicantIds) {
+function removeSubsetOfApplicants(arrayOfApplicantIds) {
   for (i = 0; i < arrayOfApplicantIds.length; i++) {
-    chosenDatasetTotal -= obj[arrayOfApplicantIds[i]];
-    delete obj[arrayOfApplicantIds[i]];
+    chosenDatasetTotal -= chosenDataset[arrayOfApplicantIds[i]];
+    delete chosenDataset[arrayOfApplicantIds[i]];
   }
 }
 
