@@ -13,27 +13,28 @@ var allPledges = dataset.reduce(function(obj, currentValue, index) {
   return obj;
 }, {});
 var allPledgesTotal = dataset.reduce(function (a, b) { return a + b; }, 0);
-
-// Make copy of original dataset, called successfulApplicants
-var successfulApplicants = {};
 var runningTotal = allPledgesTotal;
-for (var i in allPledges) successfulApplicants[i] = allPledges[i];
-/*
-Now randomly remove pledges until the running total is just under goal.
-This leaves us with only successful applicants in our new object
-*/
-var ids = Object.keys(successfulApplicants);
-while (runningTotal >= goal ) {
-  var randomId = ids.splice(Math.floor(Math.random() * ids.length), 1)[0];
-  runningTotal -= successfulApplicants[randomId];
-  delete successfulApplicants[randomId];
-}
 
 /*
-Update original dataset by removing chosen applicants, so they can't
-be chosen again later if more applicants are required
+Make copy of original dataset, which will end up containing only
+successful applicants
 */
-for (var i in successfulApplicants) delete allPledges[i];
+var successfulApplicants = getCopyOfObject(allPledges);
+
+/*
+Now randomly remove pledges and update the running total until it
+is just under goal. This leaves us with only successful applicants
+in our new object
+*/
+chooseSuccessfulApplicants();
+
+/*
+Once we have our chosen applicants, we need to remove these applicants from the
+original pledges list, so that they can't be chosen again later if more
+applicants are required
+*/
+removeObjectSubset(successfulApplicants, allPledges);
+
 
 console.log("\nGoal: " + goal +
   "\nTotal pledged: " + allPledgesTotal +
@@ -61,6 +62,25 @@ console.log("\nNEW PLEDGERS SELECTED" +
   "\nNew chosen pledges total: " + runningTotal
 );
 
+
+function getCopyOfObject(oldDatasetObject) {
+  var newDatasetObject = {};
+  for (var i in oldDatasetObject) newDatasetObject[i] = oldDatasetObject[i];
+  return newDatasetObject;
+}
+
+function chooseSuccessfulApplicants() {
+  var ids = Object.keys(successfulApplicants);
+  while (runningTotal >= goal ) {
+    var randomId = ids.splice(Math.floor(Math.random() * ids.length), 1)[0];
+    runningTotal -= successfulApplicants[randomId];
+    delete successfulApplicants[randomId];
+  }
+}
+
+function removeObjectSubset(subset, superset) {
+  for (var i in subset) delete superset[i];
+}
 
 /**
  * Returns an array of random pledge IDs, whose length is
