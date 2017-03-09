@@ -1,76 +1,50 @@
 var PD = require("probability-distributions");
 
-var goal = 2500000;
+var goal = 250000;
 var pledgeValues = [10,20,50,100,250,500,1000];
-
-/*
-Generate test data and convert to object 'allPledges', giving each pledge
-a unique ID
-*/
-var dataset = PD.sample(pledgeValues, 100000, true, [7,6,5,4,3,2,1]);
+var dataset = PD.sample(pledgeValues, 10000, true, [7,6,5,4,3,2,1]);
+// Convert to object so each pledge has a unique ID
 var allPledges = dataset.reduce(function(obj, currentValue, index) {
   obj[index] = currentValue;
   return obj;
 }, {});
+
 var allPledgesTotal = dataset.reduce(function (a, b) { return a + b; }, 0);
 if (allPledgesTotal < goal) throw "Not enough pledges to reach goal";
 
 var runningTotal = allPledgesTotal;
 
-/*
-Make copy of original dataset, which will end up containing only
-successful applicants
-*/
 var successfulApplicants = getCopyOfObject(allPledges);
 
-/*
-Now randomly remove pledges and update the running total until it
-is just under goal. This leaves us with only successful applicants
-in our new object
-*/
 chooseSuccessfulApplicants();
 
-/*
-Once we have our chosen applicants, we need to remove these applicants from the
-original pledges list, so that they can't be chosen again later if more
-applicants are required
-*/
 removeObjectSubset(successfulApplicants, allPledges);
 
-
-console.log("\nGoal: " + goal +
-  "\nTotal pledged: " + allPledgesTotal +
-  "\nNumber of chosen pledgers: " + Object.keys(successfulApplicants).length +
-  "\nChosen pledges total: " + runningTotal
-);
 
 
 
 // Remove failed pledges
-var fractionOfDroppedPledgers = 0.1;
-var subset = getRandomSubsetOfChosenApplicants(fractionOfDroppedPledgers);
+var percentageOfDroppedPledgers = 10;
+var subset = getRandomSubsetOfChosenApplicants(percentageOfDroppedPledgers / 100);
 removeSubsetOfApplicants(subset);
 
-console.log("\nOH FUCK, WE LOST " + subset.length + " PLEDGERS!" +
-  "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
-  "\nNew chosen pledges total: " + runningTotal
-);
 
-// Repopulate chosen pledges dataset
 repopulateChosenPledges();
 
-console.log("\nNEW PLEDGERS SELECTED" +
-  "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
-  "\nNew chosen pledges total: " + runningTotal
-);
 
-
+/*
+ * Get shallow copy of object
+ */
 function getCopyOfObject(oldDatasetObject) {
   var newDatasetObject = {};
   for (var i in oldDatasetObject) newDatasetObject[i] = oldDatasetObject[i];
   return newDatasetObject;
 }
 
+/*
+ * Randomly remove pledges and update the running total until it
+ * is just under goal. This leaves us with only successful applicants
+ */
 function chooseSuccessfulApplicants() {
   var ids = Object.keys(successfulApplicants);
   while (runningTotal >= goal ) {
@@ -78,13 +52,23 @@ function chooseSuccessfulApplicants() {
     runningTotal -= successfulApplicants[randomId];
     delete successfulApplicants[randomId];
   }
+  console.log("\nGoal: " + goal +
+    "\nTotal pledged: " + allPledgesTotal +
+    "\nNumber of chosen pledgers: " + Object.keys(successfulApplicants).length +
+    "\nChosen pledges total: " + runningTotal
+  );
 }
 
+/*
+ * Once we have our chosen applicants, we need to remove these applicants
+ * from the original pledges list, so that they can't be chosen again later
+ * if more applicants are required
+ */
 function removeObjectSubset(subset, superset) {
   for (var i in subset) delete superset[i];
 }
 
-/**
+/*
  * Returns an array of random pledge IDs, whose length is
  * a specified fraction of the list of chosen pledges
  * @param {Number} fractionOf
@@ -113,6 +97,10 @@ function removeSubsetOfApplicants(arrayOfApplicantIDs) {
     runningTotal -= successfulApplicants[arrayOfApplicantIDs[i]];
     delete successfulApplicants[arrayOfApplicantIDs[i]];
   }
+  console.log("\nOH FUCK, WE LOST " + subset.length + " PLEDGERS!" +
+    "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
+    "\nNew chosen pledges total: " + runningTotal
+  );
 }
 
 /**
@@ -131,4 +119,9 @@ function repopulateChosenPledges() {
     successfulApplicants[randomId] = allPledges[randomId];
     delete allPledges[randomId];
   }
+  console.log("\nNEW PLEDGERS SELECTED" +
+    "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
+    "\nNew chosen pledges total: " + runningTotal +
+    "\n"
+  );
 }
