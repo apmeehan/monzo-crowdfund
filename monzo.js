@@ -13,6 +13,8 @@ var allPledges = dataset.reduce(function(obj, currentValue, index) {
   return obj;
 }, {});
 var allPledgesTotal = dataset.reduce(function (a, b) { return a + b; }, 0);
+if (allPledgesTotal < goal) throw "Not enough pledges to reach goal";
+
 var runningTotal = allPledgesTotal;
 
 /*
