@@ -10,7 +10,14 @@ var allPledges = dataset.reduce(function(obj, currentValue, index) {
 }, {});
 
 var allPledgesTotal = dataset.reduce(function (a, b) { return a + b; }, 0);
-if (allPledgesTotal < goal) throw "Not enough pledges to reach goal";
+
+console.log("Goal: " + goal +
+  "\nTotal pledged: " + allPledgesTotal
+);
+if (allPledgesTotal < goal) {
+  console.log("NOT ENOUGH PLEDGES TO REACH GOAL");
+  return;
+}
 
 var runningTotal = allPledgesTotal;
 
@@ -52,8 +59,7 @@ function chooseSuccessfulApplicants() {
     runningTotal -= successfulApplicants[randomId];
     delete successfulApplicants[randomId];
   }
-  console.log("\nGoal: " + goal +
-    "\nTotal pledged: " + allPledgesTotal +
+  console.log(
     "\nNumber of chosen pledgers: " + Object.keys(successfulApplicants).length +
     "\nChosen pledges total: " + runningTotal
   );
