@@ -1,20 +1,20 @@
-var PD = require("probability-distributions");
+const PD = require("probability-distributions");
 
-var goal = 250000;
-var pledgeValues = [10,20,50,100,250,500,1000];
-var dataset = PD.sample(pledgeValues, 10000, true, [7,6,5,4,3,2,1]);
+const GOAL = 250000;
+const PLEDGE_VALUES = [10,20,50,100,250,500,1000];
+const DATASET = PD.sample(PLEDGE_VALUES, 10000, true, [7,6,5,4,3,2,1]);
 // Convert to object so each pledge has a unique ID
-var allPledges = dataset.reduce(function(obj, currentValue, index) {
+var allPledges = DATASET.reduce(function(obj, currentValue, index) {
   obj[index] = currentValue;
   return obj;
 }, {});
 
-var allPledgesTotal = dataset.reduce(function (a, b) { return a + b; }, 0);
+var allPledgesTotal = DATASET.reduce(function (a, b) { return a + b; }, 0);
 
-console.log("Goal: " + goal +
+console.log("Goal: " + GOAL +
   "\nTotal pledged: " + allPledgesTotal
 );
-if (allPledgesTotal < goal) {
+if (allPledgesTotal < GOAL) {
   console.log("NOT ENOUGH PLEDGES TO REACH GOAL");
   return;
 }
@@ -49,7 +49,7 @@ function getCopyOfObject(oldDatasetObject) {
  */
 function chooseSuccessfulApplicants() {
   var ids = Object.keys(successfulApplicants);
-  while (runningTotal >= goal ) {
+  while (runningTotal >= GOAL ) {
     var randomId = ids.splice(Math.floor(Math.random() * ids.length), 1)[0];
     runningTotal -= successfulApplicants[randomId];
     delete successfulApplicants[randomId];
@@ -93,7 +93,7 @@ function getRandomSubsetOfChosenApplicants(fractionOf) {
  * @param {Array} arrayOfApplicantIDs
  */
 function removeSubsetOfApplicants(arrayOfApplicantIDs) {
-  var maxPledgeValue = pledgeValues[pledgeValues.length - 1];
+  var maxPledgeValue = PLEDGE_VALUES[PLEDGE_VALUES.length - 1];
   for (i = 0; i < arrayOfApplicantIDs.length; i++) {
     runningTotal -= successfulApplicants[arrayOfApplicantIDs[i]];
     delete successfulApplicants[arrayOfApplicantIDs[i]];
@@ -112,8 +112,8 @@ function removeSubsetOfApplicants(arrayOfApplicantIDs) {
  * to the goal as possible
  */
 function repopulateChosenPledges() {
-  var maxPledgeValue = pledgeValues[pledgeValues.length - 1];
-  while (runningTotal <= goal - maxPledgeValue) {
+  var maxPledgeValue = PLEDGE_VALUES[PLEDGE_VALUES.length - 1];
+  while (runningTotal <= GOAL - maxPledgeValue) {
     var ids = Object.keys(allPledges);
   	var randomId = ids[Math.floor(Math.random() * ids.length)];
   	runningTotal += allPledges[randomId];
