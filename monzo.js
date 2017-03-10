@@ -22,21 +22,16 @@ if (allPledgesTotal < goal) {
 var runningTotal = allPledgesTotal;
 
 var successfulApplicants = getCopyOfObject(allPledges);
-
 chooseSuccessfulApplicants();
-
 removeObjectSubset(successfulApplicants, allPledges);
-
-
-
 
 // Remove failed pledges
 var percentageOfDroppedPledgers = 10;
 var subset = getRandomSubsetOfChosenApplicants(percentageOfDroppedPledgers / 100);
 removeSubsetOfApplicants(subset);
 
-
 repopulateChosenPledges();
+
 
 
 /*
