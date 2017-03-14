@@ -1,5 +1,3 @@
-const PD = require("probability-distributions");
-
 const GOAL = 250000;
 const PLEDGE_VALUES = [10,20,50,100,250,500,1000];
 const DATASET = PD.sample(PLEDGE_VALUES, 10000, true, [7,6,5,4,3,2,1]);
@@ -16,7 +14,6 @@ console.log("Goal: " + GOAL +
 );
 if (allPledgesTotal < GOAL) {
   console.log("NOT ENOUGH PLEDGES TO REACH GOAL");
-  return;
 }
 
 var runningTotal = allPledgesTotal;
