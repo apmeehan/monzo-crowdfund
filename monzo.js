@@ -29,6 +29,10 @@ function removeObjectSubset(subset, superset) {
   for (var i in subset) delete superset[i];
 }
 
+function getRandomIndex(arr) {
+  return Math.floor(Math.random() * arr.length);
+}
+
 /*
  * Returns an array of random keys, whose size is
  * a specified fraction of that of the passed object
@@ -38,7 +42,7 @@ function getRandomSubsetOfObject(fractionOf, obj) {
   var subset = [];
   var keys = Object.keys(obj);
   for (var i = 0; i < numberOf; i++) {
-    var randomIndex = Math.floor(Math.random() * keys.length);
+    var randomIndex = getRandomIndex(keys);
     var randomKey = keys.splice(randomIndex, 1)[0];
     subset.push(randomKey);
   }
@@ -79,7 +83,7 @@ monzo.chooseSuccessfulApplicants = function () {
   var ids = Object.keys(successfulApplicants);
 
   while (runningTotal >= GOAL ) {
-    var randomId = ids.splice(Math.floor(Math.random() * ids.length), 1)[0];
+    var randomId = ids.splice(getRandomIndex(ids), 1)[0];
     runningTotal -= successfulApplicants[randomId];
     delete successfulApplicants[randomId];
   }
@@ -109,7 +113,6 @@ monzo.removeFailedApplicants = function (fractionOf) {
     runningTotal -= successfulApplicants[arrayOfIDs[i]];
     allPledgesTotal -= successfulApplicants[arrayOfIDs[i]];
     delete successfulApplicants[arrayOfIDs[i]];
-    delete allPledges[arrayOfIDs[i]];
   }
 
   console.log("\nOH FUCK, WE LOST " + arrayOfIDs.length + " PLEDGERS!" +
@@ -131,7 +134,7 @@ monzo.repopulateSuccessfulApplicants = function () {
   var ids = Object.keys(allPledges);
 
   while (runningTotal <= GOAL - maxPledgeValue) {
-  	var randomId = ids.splice(Math.floor(Math.random() * ids.length), 1)[0];
+  	var randomId = ids.splice(getRandomIndex(ids), 1)[0];
   	runningTotal += allPledges[randomId];
     successfulApplicants[randomId] = allPledges[randomId];
     delete allPledges[randomId];
