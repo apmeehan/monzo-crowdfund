@@ -17,7 +17,7 @@ monzo.getRunningTotal = function() { return runningTotal };
 
 
 
-/*---------------INTERNAL FUNCTIONS---------------*/
+/*---------------PRIVATE FUNCTIONS---------------*/
 
 function getCopyOfObject(oldDatasetObject) {
   var newDatasetObject = {};
@@ -29,12 +29,9 @@ function removeObjectSubset(subset, superset) {
   for (var i in subset) delete superset[i];
 }
 
-/**
+/*
  * Returns an array of random keys, whose size is
  * a specified fraction of that of the passed object
- * @param {Number} fractionOf
- * @param {Object} obj
- * @returns {Array} subset
  */
 function getRandomSubsetOfObject(fractionOf, obj) {
   var numberOf = Math.floor(Object.keys(obj).length * fractionOf);
@@ -49,10 +46,12 @@ function getRandomSubsetOfObject(fractionOf, obj) {
 }
 
 
-/*---------------EXTERNAL FUNCTIONS---------------*/
+/*---------------PUBLIC FUNCTIONS---------------*/
 
-/*
- *
+/**
+ * Create the datastructure objects, which will hold the
+ * sets of pledges and successful applicants, and calculate
+ * total amount of pledges
  */
 monzo.initialiseVariables = function () {
   // Convert dataset array to object so each pledge has a unique ID
@@ -72,7 +71,7 @@ monzo.initialiseVariables = function () {
 }
 
 
-/*
+/**
  * Randomly remove pledges and update the running total until it
  * is just under goal. This leaves us with only successful applicants
  */
@@ -99,9 +98,9 @@ monzo.chooseSuccessfulApplicants = function () {
 
 
 /**
- * On being given an array of pledge IDs, removes those pledges
- * from the list of chosen pledges
- * @param {Array} arrayOfIDs
+ * On being given a decimal fraction between 0 and 1, removes this fraction
+ * of applicants from the set
+ * @param {Number} fractionOf
  */
 monzo.removeFailedApplicants = function (fractionOf) {
   arrayOfIDs = getRandomSubsetOfObject(fractionOf, successfulApplicants);
@@ -137,7 +136,7 @@ monzo.repopulateSuccessfulApplicants = function () {
     successfulApplicants[randomId] = allPledges[randomId];
     delete allPledges[randomId];
   }
-  
+
   console.log("\nNEW PLEDGERS SELECTED" +
     "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
     "\nNew chosen pledges total: " + runningTotal +
