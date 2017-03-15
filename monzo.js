@@ -37,16 +37,14 @@ function getRandomIndex(arr) {
  * Returns an array of random keys, whose size is
  * a specified fraction of that of the passed object
  */
-function getRandomSubsetOfObject(fractionOf, obj) {
+function getRandomKeysFromObject(fractionOf, obj) {
   var numberOf = Math.floor(Object.keys(obj).length * fractionOf);
-  var subset = [];
+  var arr = [];
   var keys = Object.keys(obj);
-  for (var i = 0; i < numberOf; i++) {
-    var randomIndex = getRandomIndex(keys);
-    var randomKey = keys.splice(randomIndex, 1)[0];
-    subset.push(randomKey);
-  }
-  return subset;
+  for (var i = 0; i < numberOf; i++)
+    arr.push(keys.splice(getRandomIndex(keys), 1)[0]);
+
+  return arr;
 }
 
 
@@ -107,7 +105,7 @@ monzo.chooseSuccessfulApplicants = function () {
  * @param {Number} fractionOf
  */
 monzo.removeFailedApplicants = function (fractionOf) {
-  arrayOfIDs = getRandomSubsetOfObject(fractionOf, successfulApplicants);
+  arrayOfIDs = getRandomKeysFromObject(fractionOf, successfulApplicants);
 
   for (i = 0; i < arrayOfIDs.length; i++) {
     runningTotal -= successfulApplicants[arrayOfIDs[i]];
