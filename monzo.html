@@ -3,26 +3,41 @@
     <script src="test-data.js"></script>
     <script src="monzo.js"></script>
     <script>
-      monzo.initialiseVariables();
-      monzo.chooseSuccessfulApplicants();
-      monzo.removeFailedApplicants(0.1);
-      monzo.repopulateSuccessfulApplicants();
+      window.onload = function () {
+        monzo.initialiseVariables();
+
+        document.getElementById("pledged").innerHTML = monzo.getAllPledgesTotal();
+
+        document.getElementById("calculate").onclick = function () {
+          monzo.chooseSuccessfulApplicants();
+          document.getElementById("chosen").innerHTML = monzo.getRunningTotal();
+        };
+
+        document.getElementById("recalculate").onclick = function () {
+          var percentage = document.getElementById("failed").value;
+          monzo.removeFailedApplicants(percentage / 100);
+          monzo.repopulateSuccessfulApplicants();
+          document.getElementById("pledged").innerHTML = monzo.getAllPledgesTotal();
+          document.getElementById("chosen").innerHTML = monzo.getRunningTotal();
+        };
+      }
     </script>
   </head>
 
   <body>
-    <h1>Monzo Ballot</h1>
+    <h1>Monzo Crowdfund</h1>
 
-    <h2>Total Pledged</h2>
-    <p>[data]</p>
+    <h2>Pledged</h2>
+    <p id="pledged"></p>
 
-    <button type="button">Choose Successful Applicants</button>
+    <h2>Chosen</h2>
+    <p id="chosen">???</p>
+    <button id="calculate" type="button">Calculate</button>
 
-    <h2>Total Chosen</h2>
-    <p>[data]</p>
-
-    <label for="failed">Number of failed pledges:</label>
-    <input type="text" id="failed" />
-    <button type="button">Update Totals</button>
+    <p>
+      <label for="failed">Percentage of failed pledges:</label>
+      <input id="failed" type="text" />
+      <button id="recalculate" type="button">Recalculate</button>
+    </p>
   </body>
 </html>

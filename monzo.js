@@ -12,10 +12,8 @@ var allPledges,
     runningTotal,
     successfulApplicants;
 
-monzo.getAllPledges = function() { return allPledges };
 monzo.getAllPledgesTotal = function() { return allPledgesTotal };
 monzo.getRunningTotal = function() { return runningTotal };
-monzo.getSuccessfulApplicants = function() { return successfulApplicants };
 
 
 
@@ -32,8 +30,8 @@ function removeObjectSubset(subset, superset) {
 }
 
 /**
- * Returns an array of random object keys, whose length is
- * a specified fraction of the list of chosen pledges
+ * Returns an array of random keys, whose size is
+ * a specified fraction of that of the passed object
  * @param {Number} fractionOf
  * @param {Object} obj
  * @returns {Array} subset
@@ -110,7 +108,9 @@ monzo.removeFailedApplicants = function (fractionOf) {
 
   for (i = 0; i < arrayOfIDs.length; i++) {
     runningTotal -= successfulApplicants[arrayOfIDs[i]];
+    allPledgesTotal -= successfulApplicants[arrayOfIDs[i]];
     delete successfulApplicants[arrayOfIDs[i]];
+    delete allPledges[arrayOfIDs[i]];
   }
 
   console.log("\nOH FUCK, WE LOST " + arrayOfIDs.length + " PLEDGERS!" +
