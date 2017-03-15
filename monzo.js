@@ -14,43 +14,11 @@ var allPledges,
     runningTotal,
     successfulApplicants;
 
-monzo.getAllPledgesTotal = function() { return allPledgesTotal };
-monzo.getRunningTotal = function() { return runningTotal };
-
-
-
-/*---------------PRIVATE FUNCTIONS---------------*/
-
-function getCopyOfObject(oldDatasetObject) {
-  var newDatasetObject = {};
-  for (var i in oldDatasetObject) newDatasetObject[i] = oldDatasetObject[i];
-  return newDatasetObject;
-}
-
-function removeObjectSubset(subset, superset) {
-  for (var i in subset) delete superset[i];
-}
-
-function getRandomIndex(arr) {
-  return Math.floor(Math.random() * arr.length);
-}
-
-/*
- * Returns an array of random keys, whose size is
- * a specified fraction of that of the passed object
- */
-function getRandomKeysFromObject(fractionOf, obj) {
-  var numberOf = Math.floor(Object.keys(obj).length * fractionOf);
-  var arr = [];
-  var keys = Object.keys(obj);
-  for (var i = 0; i < numberOf; i++)
-    arr.push(keys.splice(getRandomIndex(keys), 1)[0]);
-
-  return arr;
-}
-
 
 /*---------------PUBLIC FUNCTIONS---------------*/
+
+monzo.getAllPledgesTotal = function() { return allPledgesTotal };
+monzo.getRunningTotal = function() { return runningTotal };
 
 /**
  * Create the datastructure objects, which will hold the
@@ -149,6 +117,37 @@ monzo.repopulateSuccessfulApplicants = function () {
     "\nNew chosen pledges total: " + runningTotal +
     "\n"
   );
+}
+
+
+/*---------------PRIVATE FUNCTIONS---------------*/
+
+function getCopyOfObject(oldDatasetObject) {
+  var newDatasetObject = {};
+  for (var i in oldDatasetObject) newDatasetObject[i] = oldDatasetObject[i];
+  return newDatasetObject;
+}
+
+function removeObjectSubset(subset, superset) {
+  for (var i in subset) delete superset[i];
+}
+
+function getRandomIndex(arr) {
+  return Math.floor(Math.random() * arr.length);
+}
+
+/*
+ * Returns an array of random keys, whose size is
+ * a specified fraction of that of the passed object
+ */
+function getRandomKeysFromObject(fractionOf, obj) {
+  var numberOf = Math.floor(Object.keys(obj).length * fractionOf);
+  var arr = [];
+  var keys = Object.keys(obj);
+  for (var i = 0; i < numberOf; i++)
+    arr.push(keys.splice(getRandomIndex(keys), 1)[0]);
+
+  return arr;
 }
 
 })();
