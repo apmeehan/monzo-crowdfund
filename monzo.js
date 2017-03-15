@@ -37,10 +37,11 @@ monzo.initialiseVariables = function (g, pv, td) {
   }, {});
 
   allPledgesTotal = testData.reduce(function (a, b) { return a + b; }, 0);
-  console.log("GOAL: " + goal + "\nTotal pledged: " + allPledgesTotal);
-  if (allPledgesTotal < goal) {
-    throw Error("Not enough pledges to reach goal");
-  }
+
+  console.log(
+    "\nGOAL: " + goal +
+    "\nTotal pledged: " + allPledgesTotal
+  );
 
   runningTotal = allPledgesTotal;
   successfulApplicants = getCopyOfObject(allPledges);
@@ -53,6 +54,15 @@ monzo.initialiseVariables = function (g, pv, td) {
  */
 monzo.chooseSuccessfulApplicants = function () {
   var ids = Object.keys(successfulApplicants);
+
+  // Check that there are enough pledges to reach goal
+  if (allPledgesTotal < goal) {
+    alert(
+      "NOT ENOUGH PLEDGES TO REACH GOAL" +
+      "\nOnly " + allPledgesTotal + " available towards " + goal + " goal"
+    );
+    throw Error("Not enough pledges to reach goal");
+  }
 
   while (runningTotal >= goal ) {
     var randomId = ids.splice(getRandomIndex(ids), 1)[0];
@@ -79,7 +89,7 @@ monzo.chooseSuccessfulApplicants = function () {
  * @param {Number} fractionOf
  */
 monzo.removeFailedApplicants = function (fractionOf) {
-  arrayOfIDs = getRandomKeysFromObject(fractionOf, successfulApplicants);
+  var arrayOfIDs = getRandomKeysFromObject(fractionOf, successfulApplicants);
 
   for (i = 0; i < arrayOfIDs.length; i++) {
     runningTotal -= successfulApplicants[arrayOfIDs[i]];
@@ -105,9 +115,21 @@ monzo.repopulateSuccessfulApplicants = function () {
   var maxPledgeValue = pledgeValues[pledgeValues.length - 1];
   var ids = Object.keys(allPledges);
 
+  // Check that there are enough pledges in original set to repopulate
+  availablePledgesTotal = Object.keys(allPledges).reduce(function(sum, key) {
+    return sum + allPledges[key];
+  }, 0);
+  if (availablePledgesTotal < goal) {
+    alert(
+      "NOT ENOUGH PLEDGES TO REACH GOAL" +
+      "\nOnly " + availablePledgesTotal + " available towards goal of " + goal
+    );
+    throw Error("Not enough pledges to reach goal");
+  }
+
   while (runningTotal <= goal - maxPledgeValue) {
-  	var randomId = ids.splice(getRandomIndex(ids), 1)[0];
-  	runningTotal += allPledges[randomId];
+    var randomId = ids.splice(getRandomIndex(ids), 1)[0];
+    runningTotal += allPledges[randomId];
     successfulApplicants[randomId] = allPledges[randomId];
     delete allPledges[randomId];
   }
