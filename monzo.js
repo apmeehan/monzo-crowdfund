@@ -3,10 +3,12 @@
 // Set global namespace object
 window.monzo = monzo = {};
 
-const GOAL = 250000;
-const PLEDGE_VALUES = [10,20,50,100,250,500,1000];
-const DATASET = PD.sample(PLEDGE_VALUES, 10000, true, [7,6,5,4,3,2,1]);
+// To be set directly by passed arguments on execution, and treated as constants
+var goal,
+    pledgeValues,
+    testData;
 
+// Main variables
 var allPledges,
     allPledgesTotal,
     runningTotal,
@@ -55,16 +57,20 @@ function getRandomKeysFromObject(fractionOf, obj) {
  * sets of pledges and successful applicants, and calculate
  * total amount of pledges
  */
-monzo.initialiseVariables = function () {
+monzo.initialiseVariables = function (g, pv, td) {
+  goal = g;
+  pledgeValues = pv;
+  testData = td;
+
   // Convert dataset array to object so each pledge has a unique ID
-  allPledges = DATASET.reduce(function(obj, currentValue, index) {
+  allPledges = testData.reduce(function(obj, currentValue, index) {
     obj[index] = currentValue;
     return obj;
   }, {});
 
-  allPledgesTotal = DATASET.reduce(function (a, b) { return a + b; }, 0);
-  console.log("GOAL: " + GOAL + "\nTotal pledged: " + allPledgesTotal);
-  if (allPledgesTotal < GOAL) {
+  allPledgesTotal = testData.reduce(function (a, b) { return a + b; }, 0);
+  console.log("GOAL: " + goal + "\nTotal pledged: " + allPledgesTotal);
+  if (allPledgesTotal < goal) {
     throw Error("Not enough pledges to reach goal");
   }
 
@@ -80,7 +86,7 @@ monzo.initialiseVariables = function () {
 monzo.chooseSuccessfulApplicants = function () {
   var ids = Object.keys(successfulApplicants);
 
-  while (runningTotal >= GOAL ) {
+  while (runningTotal >= goal ) {
     var randomId = ids.splice(getRandomIndex(ids), 1)[0];
     runningTotal -= successfulApplicants[randomId];
     delete successfulApplicants[randomId];
@@ -128,10 +134,10 @@ monzo.removeFailedApplicants = function (fractionOf) {
  * to the goal as possible
  */
 monzo.repopulateSuccessfulApplicants = function () {
-  var maxPledgeValue = PLEDGE_VALUES[PLEDGE_VALUES.length - 1];
+  var maxPledgeValue = pledgeValues[pledgeValues.length - 1];
   var ids = Object.keys(allPledges);
 
-  while (runningTotal <= GOAL - maxPledgeValue) {
+  while (runningTotal <= goal - maxPledgeValue) {
   	var randomId = ids.splice(getRandomIndex(ids), 1)[0];
   	runningTotal += allPledges[randomId];
     successfulApplicants[randomId] = allPledges[randomId];

@@ -4,7 +4,11 @@
     <script src="monzo.js"></script>
     <script>
       window.onload = function () {
-        monzo.initialiseVariables();
+        const GOAL = 250000;
+        const PLEDGE_VALUES = [10,20,50,100,250,500,1000];
+        const TEST_DATA = PD.sample(PLEDGE_VALUES, 10000, true, [7,6,5,4,3,2,1]);
+
+        monzo.initialiseVariables(GOAL, PLEDGE_VALUES, TEST_DATA);
 
         document.getElementById("pledged").innerHTML = monzo.getAllPledgesTotal();
 
