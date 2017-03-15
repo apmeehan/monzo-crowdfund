@@ -2,6 +2,12 @@
   <head>
     <script src="test-data.js"></script>
     <script src="monzo.js"></script>
+    <script>
+      monzo.initialiseVariables();
+      monzo.chooseSuccessfulApplicants();
+      monzo.removeFailedApplicants(0.1);
+      monzo.repopulateSuccessfulApplicants();
+    </script>
   </head>
 
   <body>

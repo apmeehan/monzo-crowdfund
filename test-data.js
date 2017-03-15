@@ -1,4 +1,5 @@
-var PD = {
+(function() {
+window.PD = {
   /**
    *
    * @param collection Array of items to sample from
@@ -165,3 +166,4 @@ var PD = {
       }
   }
 }
+})();
