@@ -129,13 +129,15 @@ monzo.removeFailedApplicants = function (fractionOf) {
  */
 monzo.repopulateSuccessfulApplicants = function () {
   var maxPledgeValue = PLEDGE_VALUES[PLEDGE_VALUES.length - 1];
+  var ids = Object.keys(allPledges);
+
   while (runningTotal <= GOAL - maxPledgeValue) {
-    var ids = Object.keys(allPledges);
-  	var randomId = ids[Math.floor(Math.random() * ids.length)];
+  	var randomId = ids.splice(Math.floor(Math.random() * ids.length), 1)[0];
   	runningTotal += allPledges[randomId];
     successfulApplicants[randomId] = allPledges[randomId];
     delete allPledges[randomId];
   }
+  
   console.log("\nNEW PLEDGERS SELECTED" +
     "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
     "\nNew chosen pledges total: " + runningTotal +
