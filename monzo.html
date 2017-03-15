@@ -15,6 +15,7 @@
         document.getElementById("calculate").onclick = function () {
           monzo.chooseSuccessfulApplicants();
           document.getElementById("chosen").innerHTML = monzo.getRunningTotal();
+          document.getElementById("recalculate").disabled = false;
         };
 
         document.getElementById("recalculate").onclick = function () {
@@ -41,7 +42,7 @@
     <p>
       <label for="failed">Percentage of failed pledges:</label>
       <input id="failed" type="text" />
-      <button id="recalculate" type="button">Recalculate</button>
+      <button id="recalculate" disabled=true>Recalculate</button>
     </p>
   </body>
 </html>
