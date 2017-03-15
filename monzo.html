@@ -8,22 +8,27 @@
         const PLEDGE_VALUES = [10,20,50,100,250,500,1000];
         const TEST_DATA = PD.sample(PLEDGE_VALUES, 10000, true, [7,6,5,4,3,2,1]);
 
+        var pledgedDiv = document.getElementById("pledged");
+        var chosenDiv = document.getElementById("chosen");
+        var calcButton = document.getElementById("calculate");
+        var recalcButton = document.getElementById("recalculate");
+
         monzo.initialiseVariables(GOAL, PLEDGE_VALUES, TEST_DATA);
 
-        document.getElementById("pledged").innerHTML = monzo.getAllPledgesTotal();
+        pledgedDiv.innerHTML = monzo.getAllPledgesTotal();
 
-        document.getElementById("calculate").onclick = function () {
+        calcButton.onclick = function () {
           monzo.chooseSuccessfulApplicants();
-          document.getElementById("chosen").innerHTML = monzo.getRunningTotal();
-          document.getElementById("recalculate").disabled = false;
+          chosenDiv.innerHTML = monzo.getRunningTotal();
+          recalcButton.disabled = false;
         };
 
-        document.getElementById("recalculate").onclick = function () {
+        recalcButton.onclick = function () {
           var percentage = document.getElementById("failed").value;
           monzo.removeFailedApplicants(percentage / 100);
           monzo.repopulateSuccessfulApplicants();
-          document.getElementById("pledged").innerHTML = monzo.getAllPledgesTotal();
-          document.getElementById("chosen").innerHTML = monzo.getRunningTotal();
+          pledgedDiv.innerHTML = monzo.getAllPledgesTotal();
+          chosenDiv.innerHTML = monzo.getRunningTotal();
         };
       }
     </script>
@@ -33,10 +38,10 @@
     <h1>Monzo Crowdfund</h1>
 
     <h2>Pledged</h2>
-    <p id="pledged"></p>
+    <div id="pledged"></div>
 
     <h2>Chosen</h2>
-    <p id="chosen">???</p>
+    <div id="chosen">???</div>
     <button id="calculate" type="button">Calculate</button>
 
     <p>
