@@ -8,46 +8,75 @@
         const PLEDGE_VALUES = [10,20,50,100,250,500,1000];
         const TEST_DATA = PD.sample(PLEDGE_VALUES, 10000, true, [7,6,5,4,3,2,1]);
 
-        var pledgedDiv = document.getElementById("pledged");
-        var chosenDiv = document.getElementById("chosen");
+        var pledged = document.getElementById("pledged");
+        var chosen = document.getElementById("chosen");
         var calcButton = document.getElementById("calculate");
+        var failedInput = document.getElementById("failed-input")
         var recalcButton = document.getElementById("recalculate");
+        var failed = document.getElementById("failed");
+        var resetButton = document.getElementById("reset");
 
         monzo.initialiseVariables(GOAL, PLEDGE_VALUES, TEST_DATA);
 
-        pledgedDiv.innerHTML = monzo.getAllPledgesTotal();
+        document.getElementById("goal").innerHTML = monzo.getGoal();
+
+        pledged.innerHTML = monzo.getAllPledgesTotal();
+
+        recalcButton.disabled = true;
+
+        if (monzo.getAreVariablesLoaded()) {
+          pledged.innerHTML = monzo.getAllPledgesTotal();
+          failed.innerHTML = monzo.getNumberOfFailed();
+          // If running total equals original total then successful applicants
+          // have not been calculated yet so don't display
+          if (monzo.getRunningTotal() !== monzo.getAllPledgesTotal()) {
+            chosen.innerHTML = monzo.getRunningTotal();
+            calcButton.disabled = true;
+            recalcButton.disabled = false;
+          }
+        }
 
         calcButton.onclick = function () {
           monzo.chooseSuccessfulApplicants();
-          chosenDiv.innerHTML = monzo.getRunningTotal();
+          chosen.innerHTML = monzo.getRunningTotal();
+          calcButton.disabled = true;
           recalcButton.disabled = false;
         };
 
         recalcButton.onclick = function () {
-          var percentage = document.getElementById("failed").value;
-          monzo.removeFailedApplicants(percentage / 100);
+          monzo.removeFailedApplicants(failedInput.value / 100);
           monzo.repopulateSuccessfulApplicants();
-          pledgedDiv.innerHTML = monzo.getAllPledgesTotal();
-          chosenDiv.innerHTML = monzo.getRunningTotal();
+          pledged.innerHTML = monzo.getAllPledgesTotal();
+          chosen.innerHTML = monzo.getRunningTotal();
+          failed.innerHTML = monzo.getNumberOfFailed();
         };
+
+        resetButton.onclick = function () {
+          console.log("test");
+          localStorage.clear();
+          location.reload();
+        }
       }
     </script>
   </head>
 
   <body>
     <h1>Monzo Crowdfund</h1>
+    <p>Goal: <span id="goal" class="money"></span></p>
 
     <h2>Pledged</h2>
-    <div id="pledged"></div>
+    <div class="money"><span id="pledged" class="result">0</span></div>
 
     <h2>Chosen</h2>
-    <div id="chosen">???</div>
-    <button id="calculate" type="button">Calculate</button>
+    <div class="money"><span id="chosen" class="result">0</span></div>
+    <button id="calculate" class="big-button">Calculate</button>
 
-    <p>
-      <label for="failed">Percentage of failed pledges:</label>
-      <input id="failed" type="text" />
-      <button id="recalculate" disabled=true>Recalculate</button>
-    </p>
+    <div>
+      <label for="failed-input">Percentage of failed pledges:</label>
+      <input id="failed-input" type="number" max="100" min="0" />
+      <button id="recalculate" class="big-button">Recalculate</button>
+    </div>
+    <p class="failed"><span id="failed">0</span> total pledges failed</p>
+    <div id="reset"><button id="reset">Reset and Rerun Ballot</button></div>
   </body>
 </html>

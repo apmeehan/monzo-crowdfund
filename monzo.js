@@ -12,13 +12,30 @@ var goal,
 var allPledges,
     allPledgesTotal,
     runningTotal,
-    successfulApplicants;
+    successfulApplicants,
+    numberOfFailed;
+
+// For external programs to see if variables have already been loaded
+var areVariablesLoaded = false;
 
 
 /*---------------PUBLIC FUNCTIONS---------------*/
 
-monzo.getAllPledgesTotal = function() { return allPledgesTotal };
-monzo.getRunningTotal = function() { return runningTotal };
+monzo.getGoal = function () {
+  return Number(goal).toLocaleString("en")
+};
+monzo.getAllPledgesTotal = function () {
+  return Number(allPledgesTotal).toLocaleString("en")
+};
+monzo.getRunningTotal = function () {
+  return Number(runningTotal).toLocaleString("en")
+};
+monzo.getNumberOfFailed = function () {
+  return Number(numberOfFailed).toLocaleString("en")
+};
+monzo.getAreVariablesLoaded = function () {
+  return areVariablesLoaded
+};
 
 /**
  * Create the datastructure objects, which will hold the
@@ -26,25 +43,54 @@ monzo.getRunningTotal = function() { return runningTotal };
  * total amount of pledges
  */
 monzo.initialiseVariables = function (g, pv, td) {
-  goal = g;
-  pledgeValues = pv;
-  testData = td;
+  // Check local storage for existing variable values, otherwise start over
+  // and initialise with passed arguments
+  if (
+    localStorage.getItem("goal") !== null
+    && localStorage.getItem("pledgeValues") !== null
+    && localStorage.getItem("testData") !== null
+    && localStorage.getItem("allPledges") !== null
+    && localStorage.getItem("allPledgesTotal") !== null
+    && localStorage.getItem("runningTotal") !== null
+    && localStorage.getItem("successfulApplicants") !== null
+    && localStorage.getItem("numberOfFailed") !== null
+  ) {
+    goal = parseFloat(localStorage.getItem("goal"));
+    pledgeValues = JSON.parse(localStorage.getItem("pledgeValues"));
+    testData = JSON.parse(localStorage.getItem("testData"));
+    allPledges = JSON.parse(localStorage.getItem("allPledges"));
+    allPledgesTotal = parseFloat(localStorage.getItem("allPledgesTotal"));
+    runningTotal = parseFloat(localStorage.getItem("runningTotal"));
+    successfulApplicants = JSON.parse(localStorage.getItem("successfulApplicants"));
+    numberOfFailed = parseFloat(localStorage.getItem("numberOfFailed"));
 
-  // Convert dataset array to object so each pledge has a unique ID
-  allPledges = testData.reduce(function(obj, currentValue, index) {
-    obj[index] = currentValue;
-    return obj;
-  }, {});
+    console.log("Variables successfully retrieved from local storage");
+    areVariablesLoaded = true;
+  }
+  else {
+    goal = g;
+    pledgeValues = pv;
+    testData = td;
 
-  allPledgesTotal = testData.reduce(function (a, b) { return a + b; }, 0);
+    // Convert dataset array to object so each pledge has a unique ID
+    allPledges = testData.reduce(function(obj, currentValue, index) {
+      obj[index] = currentValue;
+      return obj;
+    }, {});
 
-  console.log(
-    "\nGOAL: " + goal +
-    "\nTotal pledged: " + allPledgesTotal
-  );
+    allPledgesTotal = testData.reduce(function (a, b) { return a + b; }, 0);
 
-  runningTotal = allPledgesTotal;
-  successfulApplicants = getCopyOfObject(allPledges);
+    console.log(
+      "\nGOAL: " + goal +
+      "\nTotal pledged: " + allPledgesTotal
+    );
+
+    runningTotal = allPledgesTotal;
+    successfulApplicants = getCopyOfObject(allPledges);
+    numberOfFailed = 0;
+
+    saveVariablesToLocalStorage();
+  }
 }
 
 
@@ -80,6 +126,8 @@ monzo.chooseSuccessfulApplicants = function () {
     "\nNumber of chosen pledgers: " + Object.keys(successfulApplicants).length +
     "\nChosen pledges total: " + runningTotal
   );
+
+  saveVariablesToLocalStorage();
 }
 
 
@@ -95,12 +143,15 @@ monzo.removeFailedApplicants = function (fractionOf) {
     runningTotal -= successfulApplicants[arrayOfIDs[i]];
     allPledgesTotal -= successfulApplicants[arrayOfIDs[i]];
     delete successfulApplicants[arrayOfIDs[i]];
+    numberOfFailed++;
   }
 
   console.log("\nOH FUCK, WE LOST " + arrayOfIDs.length + " PLEDGERS!" +
     "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
     "\nNew chosen pledges total: " + runningTotal
   );
+
+  saveVariablesToLocalStorage();
 }
 
 
@@ -139,6 +190,8 @@ monzo.repopulateSuccessfulApplicants = function () {
     "\nNew chosen pledges total: " + runningTotal +
     "\n"
   );
+
+  saveVariablesToLocalStorage();
 }
 
 
@@ -170,6 +223,17 @@ function getRandomKeysFromObject(fractionOf, obj) {
     arr.push(keys.splice(getRandomIndex(keys), 1)[0]);
 
   return arr;
+}
+
+function saveVariablesToLocalStorage() {
+  localStorage.setItem("goal", goal);
+  localStorage.setItem("pledgeValues", JSON.stringify(pledgeValues));
+  localStorage.setItem("testData", JSON.stringify(testData));
+  localStorage.setItem("allPledges", JSON.stringify(allPledges));
+  localStorage.setItem("allPledgesTotal", allPledgesTotal);
+  localStorage.setItem("runningTotal", runningTotal);
+  localStorage.setItem("successfulApplicants", JSON.stringify(successfulApplicants));
+  localStorage.setItem("numberOfFailed", numberOfFailed);
 }
 
 })();
