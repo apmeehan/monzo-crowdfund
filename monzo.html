@@ -51,8 +51,8 @@
         var failed = document.getElementById("failed");
         var resetButton = document.getElementById("reset");
 
+        console.log(monzo.getGoal() === "NaN");
         monzo.initialiseVariables(GOAL, PLEDGE_VALUES, TEST_DATA);
-
         document.getElementById("goal").innerHTML = monzo.getGoal();
 
         pledged.innerHTML = monzo.getAllPledgesTotal();
@@ -87,7 +87,6 @@
         };
 
         resetButton.onclick = function () {
-          console.log("test");
           localStorage.clear();
           location.reload();
         }
