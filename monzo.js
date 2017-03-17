@@ -43,18 +43,9 @@ monzo.getAreVariablesLoaded = function () {
  * total amount of pledges
  */
 monzo.initialiseVariables = function (g, pv, td) {
-  // Check local storage for existing variable values, otherwise start over
+  // Check local storage for existing variables, otherwise start over
   // and initialise with passed arguments
-  if (
-    localStorage.getItem("goal") !== null
-    && localStorage.getItem("pledgeValues") !== null
-    && localStorage.getItem("testData") !== null
-    && localStorage.getItem("allPledges") !== null
-    && localStorage.getItem("allPledgesTotal") !== null
-    && localStorage.getItem("runningTotal") !== null
-    && localStorage.getItem("successfulApplicants") !== null
-    && localStorage.getItem("numberOfFailed") !== null
-  ) {
+  if ( localStorage.getItem("goal") !== null ) {
     goal = parseFloat(localStorage.getItem("goal"));
     pledgeValues = JSON.parse(localStorage.getItem("pledgeValues"));
     testData = JSON.parse(localStorage.getItem("testData"));
@@ -204,8 +195,8 @@ function getCopyOfObject(oldDatasetObject) {
   return newDatasetObject;
 }
 
-function removeObjectSubset(subset, superset) {
-  for (var i in subset) delete superset[i];
+function removeObjectSubset(subset, obj) {
+  for (var i in subset) delete obj[i];
 }
 
 function getRandomIndex(arr) {
