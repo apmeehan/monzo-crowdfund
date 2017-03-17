@@ -100,6 +100,7 @@ monzo.initialiseVariables = function (g, pv, td) {
  */
 monzo.chooseSuccessfulApplicants = function () {
   var ids = Object.keys(successfulApplicants);
+  var randomId;
 
   // Check that there are enough pledges to reach goal
   if (allPledgesTotal < goal) {
@@ -111,7 +112,7 @@ monzo.chooseSuccessfulApplicants = function () {
   }
 
   while (runningTotal >= goal ) {
-    var randomId = ids.splice(getRandomIndex(ids), 1)[0];
+    randomId = ids.splice(getRandomIndex(ids), 1)[0];
     runningTotal -= successfulApplicants[randomId];
     delete successfulApplicants[randomId];
   }
