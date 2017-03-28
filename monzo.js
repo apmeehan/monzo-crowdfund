@@ -22,16 +22,16 @@ var areVariablesLoaded = false;
 /*---------------PUBLIC FUNCTIONS---------------*/
 
 monzo.getGoal = function () {
-  return Number(goal).toLocaleString("en")
+  return Number( goal ).toLocaleString( "en" )
 };
 monzo.getAllPledgesTotal = function () {
-  return Number(allPledgesTotal).toLocaleString("en")
+  return Number( allPledgesTotal ).toLocaleString( "en" )
 };
 monzo.getRunningTotal = function () {
-  return Number(runningTotal).toLocaleString("en")
+  return Number( runningTotal ).toLocaleString( "en" )
 };
 monzo.getNumberOfFailed = function () {
-  return Number(numberOfFailed).toLocaleString("en")
+  return Number( numberOfFailed ).toLocaleString( "en" )
 };
 monzo.getAreVariablesLoaded = function () {
   return areVariablesLoaded
@@ -45,17 +45,17 @@ monzo.getAreVariablesLoaded = function () {
 monzo.initialiseVariables = function (g, pv, td) {
   // Check local storage for existing variables, otherwise start over
   // and initialise with passed arguments
-  if (localStorage.getItem("goal") !== null) {
-    goal = loadFromLocalStorage("goal");
-    pledgeValues = loadFromLocalStorage("pledgeValues");
-    testData = loadFromLocalStorage("testData");
-    allPledges = loadFromLocalStorage("allPledges");
-    allPledgesTotal = loadFromLocalStorage("allPledgesTotal");
-    runningTotal = loadFromLocalStorage("runningTotal");
-    successfulApplicants = loadFromLocalStorage("successfulApplicants");
-    numberOfFailed = loadFromLocalStorage("numberOfFailed");
+  if ( localStorage.getItem( "goal" ) !== null ) {
+    goal = loadFromLocalStorage( "goal" );
+    pledgeValues = loadFromLocalStorage( "pledgeValues" );
+    testData = loadFromLocalStorage( "testData" );
+    allPledges = loadFromLocalStorage( "allPledges" );
+    allPledgesTotal = loadFromLocalStorage( "allPledgesTotal" );
+    runningTotal = loadFromLocalStorage( "runningTotal" );
+    successfulApplicants = loadFromLocalStorage( "successfulApplicants" );
+    numberOfFailed = loadFromLocalStorage( "numberOfFailed" );
 
-    console.log("Variables successfully retrieved from local storage");
+    console.log( "Variables successfully retrieved from local storage" );
     areVariablesLoaded = true;
   }
   else {
@@ -64,12 +64,12 @@ monzo.initialiseVariables = function (g, pv, td) {
     testData = td;
 
     // Convert dataset array to object so each pledge has a unique ID
-    allPledges = testData.reduce(function(obj, currentValue, index) {
-      obj[index] = currentValue;
+    allPledges = testData.reduce( function( obj, currentValue, index ) {
+      obj[ index ] = currentValue;
       return obj;
     }, {});
 
-    allPledgesTotal = testData.reduce(function (a, b) { return a + b; }, 0);
+    allPledgesTotal = testData.reduce( function (a, b) { return a + b; }, 0 );
 
     console.log(
       "\nGOAL: " + goal +
@@ -77,17 +77,17 @@ monzo.initialiseVariables = function (g, pv, td) {
     );
 
     runningTotal = allPledgesTotal;
-    successfulApplicants = getCopyOfObject(allPledges);
+    successfulApplicants = getCopyOfObject( allPledges );
     numberOfFailed = 0;
 
-    saveToLocalStorage("goal", goal);
-    saveToLocalStorage("pledgeValues", pledgeValues);
-    saveToLocalStorage("testData", testData);
-    saveToLocalStorage("allPledges", allPledges);
-    saveToLocalStorage("allPledgesTotal", allPledgesTotal);
-    saveToLocalStorage("runningTotal", runningTotal);
-    saveToLocalStorage("successfulApplicants", successfulApplicants);
-    saveToLocalStorage("numberOfFailed", numberOfFailed);
+    saveToLocalStorage( "goal", goal );
+    saveToLocalStorage( "pledgeValues", pledgeValues );
+    saveToLocalStorage( "testData", testData );
+    saveToLocalStorage( "allPledges", allPledges );
+    saveToLocalStorage( "allPledgesTotal", allPledgesTotal );
+    saveToLocalStorage( "runningTotal", runningTotal );
+    saveToLocalStorage( "successfulApplicants", successfulApplicants );
+    saveToLocalStorage( "numberOfFailed", numberOfFailed );
   }
 }
 
@@ -97,7 +97,7 @@ monzo.initialiseVariables = function (g, pv, td) {
  * is just under goal. This leaves us with only successful applicants
  */
 monzo.chooseSuccessfulApplicants = function () {
-  var ids = Object.keys(successfulApplicants);
+  var ids = Object.keys( successfulApplicants );
   var randomId;
 
   // Check that there are enough pledges to reach goal
@@ -106,11 +106,11 @@ monzo.chooseSuccessfulApplicants = function () {
       "NOT ENOUGH PLEDGES TO REACH GOAL" +
       "\nOnly " + allPledgesTotal + " available towards " + goal + " goal"
     );
-    throw Error("Not enough pledges to reach goal");
+    throw Error( "Not enough pledges to reach goal" );
   }
 
-  while (runningTotal >= goal ) {
-    randomId = ids.splice(getRandomIndex(ids), 1)[0];
+  while (runningTotal >= goal) {
+    randomId = ids.splice( getRandomIndex( ids ), 1 )[0];
     runningTotal -= successfulApplicants[randomId];
     delete successfulApplicants[randomId];
   }
@@ -119,16 +119,16 @@ monzo.chooseSuccessfulApplicants = function () {
    * from the original pledges list, so that they can't be chosen again later
    * if more applicants are required
    */
-  removeObjectSubset(successfulApplicants, allPledges);
+  for (var i in successfulApplicants) delete allPledges[i];
 
   console.log(
-    "\nNumber of chosen pledgers: " + Object.keys(successfulApplicants).length +
+    "\nNumber of chosen pledgers: " + Object.keys( successfulApplicants ).length +
     "\nChosen pledges total: " + runningTotal
   );
 
-  saveToLocalStorage("allPledges", allPledges);
-  saveToLocalStorage("runningTotal", runningTotal);
-  saveToLocalStorage("successfulApplicants", successfulApplicants);
+  saveToLocalStorage( "allPledges", allPledges );
+  saveToLocalStorage( "runningTotal", runningTotal );
+  saveToLocalStorage( "successfulApplicants", successfulApplicants );
 }
 
 
@@ -138,24 +138,24 @@ monzo.chooseSuccessfulApplicants = function () {
  * @param {Number} fractionOf
  */
 monzo.removeFailedApplicants = function (fractionOf) {
-  var arrayOfIDs = getRandomKeysFromObject(fractionOf, successfulApplicants);
+  var arrayOfIDs = getRandomKeysFromObject( fractionOf, successfulApplicants );
 
   for (i = 0; i < arrayOfIDs.length; i++) {
-    runningTotal -= successfulApplicants[arrayOfIDs[i]];
-    allPledgesTotal -= successfulApplicants[arrayOfIDs[i]];
-    delete successfulApplicants[arrayOfIDs[i]];
+    runningTotal -= successfulApplicants[ arrayOfIDs[i] ];
+    allPledgesTotal -= successfulApplicants[ arrayOfIDs[i] ];
+    delete successfulApplicants[ arrayOfIDs[i] ];
     numberOfFailed++;
   }
 
-  console.log("\nOH FUCK, WE LOST " + arrayOfIDs.length + " PLEDGERS!" +
-    "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
+  console.log( "\nOH FUCK, WE LOST " + arrayOfIDs.length + " PLEDGERS!" +
+    "\nNew number of chosen pledgers: " + Object.keys( successfulApplicants ).length +
     "\nNew chosen pledges total: " + runningTotal
   );
 
-  saveToLocalStorage("allPledgesTotal", allPledgesTotal);
-  saveToLocalStorage("runningTotal", runningTotal);
-  saveToLocalStorage("successfulApplicants", successfulApplicants);
-  saveToLocalStorage("numberOfFailed", numberOfFailed);
+  saveToLocalStorage( "allPledgesTotal", allPledgesTotal );
+  saveToLocalStorage( "runningTotal", runningTotal );
+  saveToLocalStorage( "successfulApplicants", successfulApplicants );
+  saveToLocalStorage( "numberOfFailed", numberOfFailed );
 }
 
 
@@ -168,74 +168,70 @@ monzo.removeFailedApplicants = function (fractionOf) {
  */
 monzo.repopulateSuccessfulApplicants = function () {
   var maxPledgeValue = pledgeValues[pledgeValues.length - 1];
-  var ids = Object.keys(allPledges);
+  var ids = Object.keys( allPledges );
 
   // Check that there are enough pledges in original set to repopulate
-  availablePledgesTotal = Object.keys(allPledges).reduce(function(sum, key) {
+  availablePledgesTotal = Object.keys( allPledges ).reduce( function (sum, key) {
     return sum + allPledges[key];
-  }, 0);
-  if (availablePledgesTotal < goal) {
+  }, 0 );
+  if ( availablePledgesTotal < goal ) {
     alert(
       "NOT ENOUGH PLEDGES TO REACH GOAL" +
       "\nOnly " + availablePledgesTotal + " available towards goal of " + goal
     );
-    throw Error("Not enough pledges to reach goal");
+    throw Error( "Not enough pledges to reach goal" );
   }
 
-  while (runningTotal <= goal - maxPledgeValue) {
-    var randomId = ids.splice(getRandomIndex(ids), 1)[0];
+  while ( runningTotal <= goal - maxPledgeValue ) {
+    var randomId = ids.splice( getRandomIndex( ids ), 1 )[0];
     runningTotal += allPledges[randomId];
     successfulApplicants[randomId] = allPledges[randomId];
     delete allPledges[randomId];
   }
 
-  console.log("\nNEW PLEDGERS SELECTED" +
-    "\nNew number of chosen pledgers: " + Object.keys(successfulApplicants).length +
+  console.log( "\nNEW PLEDGERS SELECTED" +
+    "\nNew number of chosen pledgers: " + Object.keys( successfulApplicants ).length +
     "\nNew chosen pledges total: " + runningTotal +
     "\n"
   );
 
-  saveToLocalStorage("allPledges", allPledges);
-  saveToLocalStorage("runningTotal", runningTotal);
-  saveToLocalStorage("successfulApplicants", successfulApplicants);
+  saveToLocalStorage( "allPledges", allPledges );
+  saveToLocalStorage( "runningTotal", runningTotal );
+  saveToLocalStorage( "successfulApplicants", successfulApplicants );
 }
 
 
 /*---------------PRIVATE FUNCTIONS---------------*/
 
-function getCopyOfObject(oldDatasetObject) {
+function getCopyOfObject( oldDatasetObject ) {
   var newDatasetObject = {};
-  for (var i in oldDatasetObject) newDatasetObject[i] = oldDatasetObject[i];
+  for ( var i in oldDatasetObject ) newDatasetObject[i] = oldDatasetObject[i];
   return newDatasetObject;
 }
 
-function removeObjectSubset(subset, obj) {
-  for (var i in subset) delete obj[i];
-}
-
-function getRandomIndex(arr) {
-  return Math.floor(Math.random() * arr.length);
+function getRandomIndex( arr ) {
+  return Math.floor( Math.random() * arr.length );
 }
 
 /*
  * Returns an array of random keys, whose size is
  * a specified fraction of that of the passed object
  */
-function getRandomKeysFromObject(fractionOf, obj) {
-  var numberOf = Math.floor(Object.keys(obj).length * fractionOf);
+function getRandomKeysFromObject( fractionOf, obj ) {
+  var numberOf = Math.floor( Object.keys( obj ).length * fractionOf );
   var arr = [];
-  var keys = Object.keys(obj);
+  var keys = Object.keys( obj );
   for (var i = 0; i < numberOf; i++)
-    arr.push(keys.splice(getRandomIndex(keys), 1)[0]);
+    arr.push( keys.splice( getRandomIndex( keys ), 1 )[0] );
 
   return arr;
 }
 
-function saveToLocalStorage(name, value) {
-  localStorage.setItem(name, JSON.stringify(value));
+function saveToLocalStorage( name, value ) {
+  localStorage.setItem( name, JSON.stringify( value ) );
 }
-function loadFromLocalStorage(name) {
-  return JSON.parse(localStorage.getItem(name));
+function loadFromLocalStorage( name ) {
+  return JSON.parse( localStorage.getItem( name ) );
 }
 
 })();
