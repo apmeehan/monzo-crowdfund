@@ -45,7 +45,7 @@ monzo.getAreVariablesLoaded = function () {
 monzo.initialiseVariables = function (g, pv, td) {
   // Check local storage for existing variables, otherwise start over
   // and initialise with passed arguments
-  if ( localStorage.getItem( "goal" ) !== null ) {
+  if (localStorage.getItem( "goal" ) !== null) {
     goal = loadFromLocalStorage( "goal" );
     pledgeValues = loadFromLocalStorage( "pledgeValues" );
     testData = loadFromLocalStorage( "testData" );
@@ -174,7 +174,7 @@ monzo.repopulateSuccessfulApplicants = function () {
   availablePledgesTotal = Object.keys( allPledges ).reduce( function (sum, key) {
     return sum + allPledges[key];
   }, 0 );
-  if ( availablePledgesTotal < goal ) {
+  if (availablePledgesTotal < goal) {
     alert(
       "NOT ENOUGH PLEDGES TO REACH GOAL" +
       "\nOnly " + availablePledgesTotal + " available towards goal of " + goal
@@ -182,7 +182,7 @@ monzo.repopulateSuccessfulApplicants = function () {
     throw Error( "Not enough pledges to reach goal" );
   }
 
-  while ( runningTotal <= goal - maxPledgeValue ) {
+  while (runningTotal <= goal - maxPledgeValue) {
     var randomId = ids.splice( getRandomIndex( ids ), 1 )[0];
     runningTotal += allPledges[randomId];
     successfulApplicants[randomId] = allPledges[randomId];
@@ -205,7 +205,8 @@ monzo.repopulateSuccessfulApplicants = function () {
 
 function getCopyOfObject( oldDatasetObject ) {
   var newDatasetObject = {};
-  for ( var i in oldDatasetObject ) newDatasetObject[i] = oldDatasetObject[i];
+  for (var i in oldDatasetObject)
+    newDatasetObject[i] = oldDatasetObject[i];
   return newDatasetObject;
 }
 
