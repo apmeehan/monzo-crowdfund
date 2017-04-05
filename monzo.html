@@ -1,0 +1,115 @@
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        text-align: center;
+      }
+      h2 {
+        font-size: 1.3em;
+        margin: 30px 0 10px 0;
+      }
+      .big-button {
+        margin: 10px 0;
+        padding: 8px;
+      }
+      .result {
+        font-size: 30px;
+      }
+      #failed-input {
+        width: 50px;
+        height: 30px;
+        font-size: 16px;
+      }
+      p.failed {
+        font-size: 14px;
+        margin-top: 0;
+      }
+      span#failed {
+        font-size: 18px;
+      }
+      div#reset {
+        margin-top: 50px;
+      }
+      .money::before {
+        content:"£ ";
+      }
+    </style>
+
+    <script src="test-data.js"></script>
+    <script src="monzo.js"></script>
+    <script>
+      window.onload = function () {
+        const GOAL = 250000;
+        const PLEDGE_VALUES = [10,20,50,100,250,500,1000];
+        const TEST_DATA = PD.sample(PLEDGE_VALUES, 10000, true, [7,6,5,4,3,2,1]);
+
+        var pledged = document.getElementById("pledged");
+        var chosen = document.getElementById("chosen");
+        var calcButton = document.getElementById("calculate");
+        var failedInput = document.getElementById("failed-input")
+        var recalcButton = document.getElementById("recalculate");
+        var failed = document.getElementById("failed");
+        var resetButton = document.getElementById("reset");
+
+        monzo.initialiseVariables(GOAL, PLEDGE_VALUES, TEST_DATA);
+        document.getElementById("goal").innerHTML = monzo.getGoal();
+
+        pledged.innerHTML = monzo.getAllPledgesTotal();
+
+        recalcButton.disabled = true;
+
+        if (monzo.getAreVariablesLoaded()) {
+          pledged.innerHTML = monzo.getAllPledgesTotal();
+          failed.innerHTML = monzo.getNumberOfFailed();
+          // If running total equals original total then successful applicants
+          // have not been calculated yet so don't display
+          if (monzo.getRunningTotal() !== monzo.getAllPledgesTotal()) {
+            chosen.innerHTML = monzo.getRunningTotal();
+            calcButton.disabled = true;
+            recalcButton.disabled = false;
+          }
+        }
+
+        calcButton.onclick = function () {
+          monzo.chooseSuccessfulApplicants();
+          chosen.innerHTML = monzo.getRunningTotal();
+          calcButton.disabled = true;
+          recalcButton.disabled = false;
+        };
+
+        recalcButton.onclick = function () {
+          monzo.removeFailedApplicants(failedInput.value / 100);
+          monzo.repopulateSuccessfulApplicants();
+          pledged.innerHTML = monzo.getAllPledgesTotal();
+          chosen.innerHTML = monzo.getRunningTotal();
+          failed.innerHTML = monzo.getNumberOfFailed();
+        };
+
+        resetButton.onclick = function () {
+          localStorage.clear();
+          location.reload();
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <h1>Monzo Crowdfund</h1>
+    <p>Goal: <span id="goal" class="money"></span></p>
+
+    <h2>Pledged</h2>
+    <div class="money"><span id="pledged" class="result">0</span></div>
+
+    <h2>Chosen</h2>
+    <div class="money"><span id="chosen" class="result">0</span></div>
+    <button id="calculate" class="big-button">Calculate</button>
+
+    <div>
+      <label for="failed-input">Percentage of failed pledges:</label>
+      <input id="failed-input" type="number" max="100" min="0" />
+      <button id="recalculate" class="big-button">Recalculate</button>
+    </div>
+    <p class="failed"><span id="failed">0</span> total pledges failed</p>
+    <div id="reset"><button id="reset">Reset and Rerun Ballot</button></div>
+  </body>
+</html>
